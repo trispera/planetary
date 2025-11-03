@@ -4,8 +4,7 @@ imagePullSecrets: []
 # Configuration related to running tasks.
 tasks:
   # The name of the namespace where task pods will be created
-  namespace: planetary-tasks
-
+  namespace: ""
 # Configuration relating to the Planetary database.
 #
 # This configuration applies whether you're using the pod-based Postgres
@@ -48,9 +47,9 @@ postgresql:
     port: 5432
   resources:
     requests:
-      cpu: 2000m
+      cpu: 500m
     limits:
-      memory: 4Gi
+      memory: 1Gi
   # Storage configuration for PostgreSQL data.
   storage:
     # The size of the persistent volume for PostgreSQL data.
@@ -63,16 +62,17 @@ postgresql:
 api:
   replicas: 2
   image:
-    name: ghcr.io/stjude-rust-labs/planetary-api
-    tag: null
+    name: ""
+    tag: ""
+  host: ""
   service:
     type: ClusterIP
     port: 8080
   resources:
     requests:
-      cpu: 2000m
+      cpu: 500m
     limits:
-      memory: 4Gi
+      memory: 1Gi
   log: info
 
 # Configuration relating to the orchestrator service that is
@@ -80,8 +80,8 @@ api:
 orchestrator:
   replicas: 2
   image:
-    name: ghcr.io/stjude-rust-labs/planetary-orchestrator
-    tag: null
+    name: ""
+    tag: ""
   account:
     create: true
     name: orchestrator-service-account
@@ -91,9 +91,9 @@ orchestrator:
   storageClass: null # use default storage class
   resources:
     requests:
-      cpu: 2000m
+      cpu: 500m
     limits:
-      memory: 4Gi
+      memory: 1Gi
   log: info
   # Configuration for scheduling preemptible tasks.
   preemptible: null
@@ -112,8 +112,8 @@ orchestrator:
 # for ensuring tasks do not become orphaned.
 monitor:
   image:
-    name: ghcr.io/stjude-rust-labs/planetary-monitor
-    tag: null
+    name: ""
+    tag: ""
   account:
     create: true
     name: monitor-service-account
@@ -122,17 +122,17 @@ monitor:
     port: 8080
   resources:
     requests:
-      cpu: 2000m
+      cpu: 500m
     limits:
-      memory: 4Gi
+      memory: 1Gi
   log: info
 
 # Configuration relating to the transporter used by Planetary for
 # transferring files to and from cloud storage.
 transporter:
   image:
-    name: ghcr.io/stjude-rust-labs/planetary-transporter
-    tag: null
+    name: ""
+    tag: ""
   storage:
     # Configuration for S3
     s3: null
@@ -156,5 +156,5 @@ transporter:
 # Configuration relating to database migrations.
 migration:
   image:
-    name: ghcr.io/stjude-rust-labs/planetary-migration
-    tag: null
+    name: ""
+    tag: ""

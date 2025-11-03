@@ -81,7 +81,7 @@ consider in your situation.
   goals.
 - **Secrets management.** We've defined Kubernetes Secrets where needed and
   structured their use for secure injection. Verify these secrets meet your
-  standards for confidentiality, access control, and rotation.
+standards for confidentiality, access control, and rotation.
 - **Credentials.** This chart does not provide default passwords or API
   keys. You must set secure, unique credentials for all components before
   deployment.
@@ -356,6 +356,12 @@ cd ..
 **Note:** Replace `mypassword` with a secure password of your choice.
 
 The database schema will be automatically set up by a post-install Helm hook that runs after the chart is deployed. The migration job waits for the database to be ready (up to 10 minutes) and then runs the necessary migrations.
+
+### Deployment on Rahti (OKD)
+
+When deploying on Rahti, it is important to have the value `tasks.namespace` as the same namespace where you plan to deploy planetary.
+
+On [Rahti](https://rahti.csc.fi), new namespaces cannot be deployed on the fly for the tasks.
 
 ### Verifying the Deployment
 

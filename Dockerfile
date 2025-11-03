@@ -126,7 +126,8 @@ RUN apt-get update && apt-get install -y curl libpq-dev pkg-config build-essenti
     rm -rf /var/lib/apt/lists/*
 
 # Create and switch to `diesel` user.
-RUN useradd -m -u 1001 -s /bin/bash diesel
+RUN groupadd --system --gid 0 --non-unique diesel && \
+    useradd --system -m -u 5001 --non-unique --gid diesel -s /bin/bash diesel
 USER diesel
 WORKDIR /home/diesel
 
@@ -144,8 +145,8 @@ RUN cargo install diesel_cli --no-default-features --features postgres
 WORKDIR /app
 
 # Copy the database crate and diesel config.
-COPY --chown=diesel:diesel ./db ./db
-COPY --chown=diesel:diesel ./diesel.toml ./diesel.toml
+COPY --chown=diesel:diesel --chmod=770 ./db ./db
+COPY --chown=diesel:diesel --chmod=777 ./diesel.toml ./diesel.toml
 
 # Set the entrypoint.
 ENTRYPOINT ["/home/diesel/.cargo/bin/diesel"]

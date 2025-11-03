@@ -34,10 +34,12 @@ spec:
       containers:
         - name: planetary-api
           image: "{{ .Values.api.image.name }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
+          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
           securityContext:
             readOnlyRootFilesystem: true
             runAsUser: 1000
             runAsNonRoot: true
+          {{- end }}
           ports:
             - name: http
               containerPort: 8080
@@ -117,10 +119,12 @@ spec:
       containers:
         - name: planetary-orchestrator
           image: "{{ .Values.orchestrator.image.name }}:{{ .Values.orchestrator.image.tag | default .Chart.AppVersion }}"
+          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
           securityContext:
             readOnlyRootFilesystem: true
             runAsUser: 1000
             runAsNonRoot: true
+          {{- end }}
           ports:
             - name: http
               containerPort: 8080
@@ -208,10 +212,12 @@ spec:
       containers:
         - name: planetary-monitor
           image: "{{ .Values.monitor.image.name }}:{{ .Values.monitor.image.tag | default .Chart.AppVersion }}"
+          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
           securityContext:
             readOnlyRootFilesystem: true
             runAsUser: 1000
             runAsNonRoot: true
+          {{- end }}
           ports:
             - name: http
               containerPort: 8080
@@ -279,14 +285,18 @@ spec:
         {{- include "chart.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: database
     spec:
+      {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
       securityContext:
         fsGroup: 1000
+      {{- end }}
       containers:
         - name: postgresql
           image: {{ .Values.postgresql.image.name }}:{{ .Values.postgresql.image.tag }}
+          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
           securityContext:
             runAsUser: 1000
             runAsNonRoot: true
+          {{- end }}
           ports:
             - containerPort: {{ .Values.database.port }}
               name: postgresql

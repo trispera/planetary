@@ -19,8 +19,10 @@ spec:
       args:
         - "-O -"
         - 'http://planetary-api:{{ .Values.api.service.port }}'
+      {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
       securityContext:
         readOnlyRootFilesystem: true
         runAsUser: 1000
         runAsNonRoot: true
+      {{- end }}
   restartPolicy: Never

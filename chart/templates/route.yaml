@@ -1,0 +1,19 @@
+{{- if (.Capabilities.APIVersions.Has "route.openshift.io/v1") }}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: planetary-api
+  namespace: {{ .Values.tasks.namespace }}
+spec:
+  host: ""
+  path: /
+  to:
+    kind: Service
+    name: planetary-api
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+{{- end }}

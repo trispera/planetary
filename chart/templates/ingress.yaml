@@ -1,0 +1,19 @@
+{{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: planetary-api
+  namespace: {{ .Values.tasks.namespace }}
+spec:
+  rules:
+  - host: {{ .Values.api.host }}
+    http:
+      paths:
+      - path: /
+        pathType: 
+        backend:
+          service:
+            name: planetary-api
+            port:
+              number: {{ .Values.api.service.port }}
+{{- end }}

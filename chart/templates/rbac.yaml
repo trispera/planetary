@@ -39,9 +39,9 @@ subjects:
 - kind: ServiceAccount
   name: {{ .Values.orchestrator.account.name }}
   namespace: {{ .Release.Namespace }}
-{{- end }}
+
+{{- if ( and (.Values.monitor.account.create) (not (.Capabilities.APIVersions.Has "authorization.openshift.io/v1"))) }}
 ---
-{{- if .Values.monitor.account.create -}}
 # Role for cluster access for the monitor (planetary namespace)
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -102,4 +102,46 @@ subjects:
 - kind: ServiceAccount
   name: {{ .Values.monitor.account.name }}
   namespace: {{ .Release.Namespace }}
-{{- end }}
+{{ end }}
+
+{{- if ( and (.Values.monitor.account.create) (.Capabilities.APIVersions.Has "authorization.openshift.io/v1")) }}
+---
+# Role for cluster access for the monitor on OpenShift
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: {{ .Values.tasks.namespace }}
+  name: monitor-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "deletecollection", "patch"]
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims"]
+  verbs: ["deletecollection", "patch"]
+---
+# Service account for the monitor
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.monitor.account.name }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+automountServiceAccountToken: true
+---
+# Role binding for the monitor
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: monitor-role-binding
+  namespace: {{ .Values.tasks.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: monitor-role
+subjects:
+- kind: ServiceAccount
+  name: {{ .Values.monitor.account.name }}
+  namespace: {{ .Release.Namespace }}
+{{ end }}
+{{ end }}

@@ -32,12 +32,20 @@ spec:
               value: {{ .Values.database.host }}
             - name: DATABASE_PORT
               value: "{{ .Values.database.port }}"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
       containers:
         - name: migration
           image: "{{ .Values.migration.image.name }}:{{ .Values.migration.image.tag | default .Chart.AppVersion }}"
+          {{- if not (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
           securityContext:
             runAsUser: 1001
             runAsNonRoot: true
+          {{- end }}
           env:
             - name: DATABASE_USER
               value: {{ .Values.database.user }}
@@ -72,7 +80,7 @@ spec:
               fi
           resources:
             requests:
-              cpu: 100m
+              cpu: 200m
               memory: 64Mi
             limits:
               memory: 128Mi
